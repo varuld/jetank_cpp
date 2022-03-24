@@ -1,0 +1,11 @@
+#! /bin/bash
+pwd_var=$(pwd)
+
+build_and_exec()
+{
+	mkdir -p "$pwd_var"/build
+	cd "$pwd_var"/build || exit
+	cmake ../
+	./main
+}
+build_and_exec
