@@ -1,0 +1,25 @@
+Left motor going forward:
+-----------
+PWMpin: 8
+in1:    10
+in2:    9
+
+motor.setPin(9, 0)
+motor.setPin(10, 1)
+-> setPin(self, pin, value):
+
+motor._pwm.setPWM(9, 0, 4096)
+motor._pwm.setPWM(10, 4096, 0)
+-> setPWM(self, channel, on, off):
+
+self.i2c.write8(0x2a, 0x00)
+self.i2c.write8(0x2b, 0x00)
+self.i2c.write8(0x2c, 0x00)
+self.i2c.write8(0x2d, 0x10)
+
+self.i2c.write8(0x2e, 0)
+self.i2c.write8(0x2f, 0x10)
+self.i2c.write8(0x30, 0x00)
+self.i2c.write8(0x31, 0x00)
+
+-> write8(self, register, value):
