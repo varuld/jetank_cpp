@@ -35,8 +35,8 @@ int main()
     {
         printf("Data read: %s\n", buffer);
     }
-    printf("Result:");
-    printf(res);
+    //printf("Result:");
+    //printf(res);
 
     return 0;
 }
