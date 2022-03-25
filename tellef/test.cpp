@@ -6,24 +6,11 @@
 #include <string>
 #include <stdio.h>
 
-std::string readI2C(int file_i2c, unsigned char * buffer, int length)
-{
-    std::string res;
-    if (read(file_i2c, buffer, length) != length)
-    {
-        printf("Failed to read from the i2c bus.\n");
-    }
-    else
-    {
-        printf("Data read: %s\n", buffer);
-    }
-    return res;
-}
-
 int main()
 {
+    std::string id_str = "/dev/i2c-1";
     char * id;
-    id = "/dev/i2c-1";
+    strcpy(id, id_str.c_str());
     unsigned char buffer[60];
     int length = 2;
     int file_i2c = open(id, O_RDWR);
@@ -41,9 +28,17 @@ int main()
         return 1;
     }
 
-    std::string i2c_data = readI2C(file_i2c, buffer, length);
-
-    printf("i2c data: %s\n", i2c_data);
+    std::string res;
+    if (read(file_i2c, buffer, length) != length)
+    {
+        printf("Failed to read from the i2c bus. \n");
+    }
+    else
+    {
+        printf("Data read: %s\n", buffer);
+    }
+    printf("Result:");
+    printf(res);
 
     return 0;
 }
