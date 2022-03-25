@@ -18,6 +18,7 @@ const int PKT_PARAMETER0 = 5;
 // Addresses
 const int ADDR_STS_GOAL_SPEED = 46;
 const int ADDR_STS_GOAL_POSITION = 42;
+const int ADDR_SCS_PRESENT_POSITION  = 56;
 
 
 // Instructions
@@ -27,7 +28,6 @@ const int INST_SYNC_WRITE = 131;
 // Angle Constants
 const int SERVO_INPUT_RANGE = 850;
 const int SERVO_ANGLE_RANGE = 180;
-
 
 int openPort(std::string devicename,int baudrate)
 {
@@ -92,8 +92,6 @@ int setSpeed(int port,uint8_t scs_id, uint16_t speed)
     return 0;
 }
 
-
-
 int moveServo(int port, uint8_t scs_id, int16_t angle)
 {
     int16_t offset = 512 + (SERVO_INPUT_RANGE * angle)/SERVO_ANGLE_RANGE;
@@ -131,6 +129,10 @@ int moveServo(int port, uint8_t scs_id, int16_t angle)
     return 0;
 }
 
+
+
+
+// DON'T USE WITH HIGH SPEED!
 int moveAllServos(int port, const std::array<int16_t,5>& angles )
 {
     int16_t offsets[angles.size()];
@@ -155,7 +157,7 @@ int moveAllServos(int port, const std::array<int16_t,5>& angles )
     {
         txpacket[data_start + 3*i] = i + 1;      /* SCS_ID  */
 
-        // Swap endianness
+        /* Swap endianness */
         txpacket[data_start + 3*i + 1] = offsets[i] >> 8; 
         txpacket[data_start + 3*i + 2] = offsets[i] & 0xFF;
     }
@@ -168,11 +170,7 @@ int moveAllServos(int port, const std::array<int16_t,5>& angles )
     checksum = ~checksum & 0xFF; //Flip bits
 	txpacket[22] = checksum;
 
-    for(int i=0;i<23;i++)
-    {
-        std::cout<<(int)txpacket[i]<<",";
-    }
-    std::cout<<"\n";
+
     
     ssize_t written_length = write(port,txpacket,23);
 	if (written_length != 23)
