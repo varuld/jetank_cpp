@@ -8,9 +8,7 @@
 
 int main()
 {
-    std::string id_str = "/dev/i2c-1";
-    char * id;
-    strcpy(id, id_str.c_str());
+    char id[] = "/dev/i2c-1";
     unsigned char buffer[60];
     int length = 2;
     int file_i2c = open(id, O_RDWR);
@@ -28,7 +26,7 @@ int main()
         return 1;
     }
 
-    std::string res;
+    char res[255];
     if (read(file_i2c, buffer, length) != length)
     {
         printf("Failed to read from the i2c bus. \n");
