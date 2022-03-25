@@ -2,17 +2,19 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <iostream>
+#include <string>
 
-string readI2C(int file_i2c, unsigned char * buffer, int length)
+std::string readI2C(int file_i2c, unsigned char * buffer, int length)
 {
-    string res;
+    std::string res;
     if (read(file_i2c, buffer, length) != length)
     {
-        printf("Failed to read from the i2c bus.\n");
+        std::cout << "Failed to read from the i2c bus.\n" << std::endl;
     }
     else
     {
-        printf("Data read: %s\n", buffer);
+        std::cout << "Data read: \n" << buffer << std::endl;
     }
     return res;
 }
@@ -27,20 +29,20 @@ int main()
 
     if (file_i2c < 0)
     {
-        printf("Failed to open the i2c bus");
+        std::cout << "Failed to open the i2c bus";
         return 1;
     }
 
     int addr = 0x60;
     if (ioctl(file_i2c, I2C_SLAVE, addr) < 0)
     {
-        printf("Failed to acquire bus acces and/or talk to slave.\n");
+        std::cout << "Failed to acquire bus acces and/or talk to slave.";
         return 1;
     }
 
-    string i2c_data = readI2C(file_i2c, buffer, length);
+    std::string i2c_data = readI2C(file_i2c, buffer, length);
 
-    printf("%s", i2c_data);
+    std::cout << i2c_data << std::endl;
 
     return 0;
 }
