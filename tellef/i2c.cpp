@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <chrono>
 #include <thread>
+#include <cstdlib>
 
 constexpr int addr = 0x60;
 
@@ -111,6 +112,74 @@ void forward(int file, double speed)
         res = i2c_smbus_write_byte_data(file, forward_reg[i+1], v2);
     }
 }
+void rightward(int file, double speed)
+{
+    
+    __u8 rightward_reg[8] = {0x0c, 0x0d, 0x10, 0x11, 0x28, 0x29, 0x3c, 0x3d};
+    __u8 other_reg[4] = {0x2b, 0x31, 0x35, 0x37};
+    if (speed < 0)
+    {
+        speed = 0;
+    }
+    else if (speed > 1.0)
+    {
+        speed = 1.0;
+    }
+    int s1 = (int) (255 * speed * 16);
+    int s2 = (int) (255 * speed * 16);
+    __u8 v1 = val1(s1);
+    __u8 v2 = val2(s2);
+    __s32 res;
+	for (int i = 0; i < sizeof(other_reg); i+=2)
+    {
+        res = i2c_smbus_write_byte_data(file, other_reg[i], 0xc0);
+        res = i2c_smbus_write_byte_data(file, other_reg[i+1], 0x04);
+    }
+    for (int i = 0; i < sizeof(rightward_reg); i += 2)
+    {
+        res = i2c_smbus_write_byte_data(file, rightward_reg[i], v1);
+        //res = i2c_smbus_write_byte_data(file, forward_reg[i+1], v2);
+    }
+}
+void stop_rightward(int file)
+{
+    __u8 rightward_reg[8] = {0x0c, 0x0d, 0x10, 0x11, 0x28, 0x29, 0x3c, 0x3d};
+	__s32 res;
+	for (int i = 0; i < sizeof(rightward_reg); i += 2)
+    {
+        res = i2c_smbus_write_byte_data(file, rightward_reg[i], 0x00);
+        res = i2c_smbus_write_byte_data(file, rightward_reg[i+1], 0x00);
+    }
+}
+void backward(int file, double speed)
+{
+	__u8 backward_reg[8] = {0x08, 0x09, 0x14, 0x15, 0x28, 0x29, 0x3c, 0x3d};
+    //__u8 other_reg[4] = {0x2b, 0x31, 0x35, 0x37};
+    __u8 other_reg[4] = {0x2d, 0x2f, 0x33, 0x39};
+    //__u8 other_reg[4] = {0x33, 0x39, 0x3c, 0x3d};
+    if (speed > 0)
+    {
+        speed = 0;
+    }
+    else if (speed > -1.0)
+    {
+        speed = -1.0;
+    }
+    int s1 = -1 * ((int) (255 * speed * 16));
+    int s2 = -1 * ((int) (255 * speed * 16));
+    __u8 v1 = val1(s1);
+    __u8 v2 = val2(s2);
+    __s32 res;
+    for (int i = 0; i < sizeof(other_reg); i++)
+    {
+        res = i2c_smbus_write_byte_data(file, other_reg[i], 0x10);
+    }
+    for (int i = 0; i < sizeof(backward_reg); i += 2)
+    {
+        res = i2c_smbus_write_byte_data(file, backward_reg[i], v1);
+        res = i2c_smbus_write_byte_data(file, backward_reg[i+1], v2);
+    }
+}
 
 void stop_forward(int file)
 {
@@ -147,7 +216,7 @@ int main()
     initialize(file);
     double speed = 0.4;
     char ch;
-    bool running = false, speed_changed = false;
+    bool running = false, speed_changed = false, turn_right = false;
     system("stty raw");
     while (1)
     {
@@ -159,13 +228,33 @@ int main()
         if (ch == 'w' && !running || speed_changed)
         {
             forward(file, speed);
+			/*if (speed < 0)
+			{
+            	//forward(file, speed);
+				backward(file, speed);
+			}
+			else
+			{
+            	forward(file, speed);
+				//backward(file, speed);
+			}
+			*/
             running = true;
             speed_changed = false;
         }
+        else if (ch == 'w' && !running || turn_right)
+		{
+			rightward(file, speed);
+		}
         else if (ch == 's' && running)
         {
             stop_forward(file);
             running = false;
+        }
+		else if (ch == 's' && turn_right)
+        {
+            stop_rightward(file);
+            turn_right = false;
         }
         else if (ch == 65)
         {
@@ -177,6 +266,17 @@ int main()
             speed -= 0.1;
             speed_changed = true;
         }
+		else if (ch == 67)
+        {
+            //speed += 0.1;
+            //speed_changed = true;
+			turn_right = true;
+        }
+/*		else if (ch == 68)
+        {
+            speed += 0.1;
+            speed_changed = true;
+        }*/
         else if (ch == 'q')
         {
             if (running)
