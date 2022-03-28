@@ -52,9 +52,9 @@ __s32 i2c_smbus_write_byte_data(int file, __u8 command, __u8 value)
 void initialize(int file)
 {
     __u8 initial_val[70] = {0x01, 0x04, 0xe2, 0xe4, 0xe8, 0xe0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     __u8 last_val[6] = {0x00, 0x00, 0x00, 0x00, 0x03, 0x00};
     __s32 res;
@@ -86,7 +86,7 @@ __u8 val2(int s)
 
 void forward(int file, double speed)
 {
-    
+
     __u8 forward_reg[8] = {0x0c, 0x0d, 0x10, 0x11, 0x28, 0x29, 0x3c, 0x3d};
     __u8 other_reg[4] = {0x2b, 0x31, 0x35, 0x37};
     if (speed < 0)
@@ -112,9 +112,20 @@ void forward(int file, double speed)
         res = i2c_smbus_write_byte_data(file, forward_reg[i+1], v2);
     }
 }
+void stop_forward(int file)
+{
+    __u8 forward_reg[8] = {0x0c, 0x0d, 0x10, 0x11, 0x28, 0x29, 0x3c, 0x3d};
+    __s32 res;
+    for (int i = 0; i < sizeof(forward_reg); i += 2)
+    {
+        res = i2c_smbus_write_byte_data(file, forward_reg[i], 0x00);
+        res = i2c_smbus_write_byte_data(file, forward_reg[i+1], 0x00);
+    }
+}
+
 void rightward(int file, double speed)
 {
-    
+
     __u8 rightward_reg[8] = {0x0c, 0x0d, 0x10, 0x11, 0x28, 0x29, 0x3c, 0x3d};
     __u8 other_reg[4] = {0x2b, 0x31, 0x35, 0x37};
     if (speed < 0)
@@ -151,6 +162,48 @@ void stop_rightward(int file)
         res = i2c_smbus_write_byte_data(file, rightward_reg[i+1], 0x00);
     }
 }
+
+void leftward(int file, double speed)
+{
+	__u8 leftward_reg[8] = {0x08, 0x09, 0x10, 0x11, 0x28, 0x29, 0x3c, 0x3d};
+    __u8 other_reg[2] = {0x2b, 0x2f}; //, 0x35, 0x37};
+    if (speed < 0)
+    {
+        speed = 0;
+    }
+    else if (speed > 1.0)
+    {
+        speed = 1.0;
+    }
+	//int s1 = (int) (255 * speed * 16);
+    //int s2 = (int) (255 * speed * 16);
+    //__u8 v1 = val1(s1);
+    //__u8 v2 = val2(s2);
+    __s32 res;
+	for (int i = 0; i < sizeof(other_reg); i++)
+    {
+		res = i2c_smbus_write_byte_data(file, other_reg[i], 0x10);
+        //res = i2c_smbus_write_byte_data(file, other_reg[i], 0xc0);
+        //res = i2c_smbus_write_byte_data(file, other_reg[i+1], 0x04);
+    }
+    for (int i = 0; i < sizeof(leftward_reg); i += 2)
+    {
+        res = i2c_smbus_write_byte_data(file, leftward_reg[i], 0xc0);
+        res = i2c_smbus_write_byte_data(file, forward_reg[i+1], 0x04);
+    }
+}
+
+void stop_leftward(int file)
+{
+	__u8 leftward_reg[8] = {0x08, 0x09, 0x10, 0x11, 0x28, 0x29, 0x3c, 0x3d};
+	__s32 res;
+	for (int i = 0; i < sizeof(rightward_reg); i += 2)
+	{
+		res = i2c_smbus_write_byte_data(file, rightward_reg[i], 0x00);
+		res = i2c_smbus_write_byte_data(file, rightward_reg[i+1], 0x00);
+	}
+}
+
 void backward(int file, double speed)
 {
 	__u8 backward_reg[8] = {0x08, 0x09, 0x14, 0x15, 0x28, 0x29, 0x3c, 0x3d};
@@ -177,20 +230,29 @@ void backward(int file, double speed)
     for (int i = 0; i < sizeof(backward_reg); i += 2)
     {
         res = i2c_smbus_write_byte_data(file, backward_reg[i], v1);
-        res = i2c_smbus_write_byte_data(file, backward_reg[i+1], v2);
+		if (backward_reg[i+1] == 0x29)
+		{
+			res = i2c_smbus_write_byte_data(file, backward_reg[i+1], 0x09);
+		}
+		else
+		{
+			res = i2c_smbus_write_byte_data(file, backward_reg[i+1], v2);
+		}
+
     }
+	/*
+	res = i2c_smbus_write_byte_data(file, backward_reg[0], 0x60);
+	res = i2c_smbus_write_byte_data(file, backward_reg[1], 0x10);
+	res = i2c_smbus_write_byte_data(file, backward_reg[2], 0x60);
+	res = i2c_smbus_write_byte_data(file, backward_reg[3], 0x06);
+	res = i2c_smbus_write_byte_data(file, backward_reg[4], 0x60);
+	res = i2c_smbus_write_byte_data(file, backward_reg[5], 0x09);
+	res = i2c_smbus_write_byte_data(file, backward_reg[6], 0x60);
+	res = i2c_smbus_write_byte_data(file, backward_reg[7], 0x06);
+	*/
 }
 
-void stop_forward(int file)
-{
-    __u8 forward_reg[8] = {0x0c, 0x0d, 0x10, 0x11, 0x28, 0x29, 0x3c, 0x3d};
-    __s32 res;
-    for (int i = 0; i < sizeof(forward_reg); i += 2)
-    {
-        res = i2c_smbus_write_byte_data(file, forward_reg[i], 0x00);
-        res = i2c_smbus_write_byte_data(file, forward_reg[i+1], 0x00);
-    }
-}
+
 
 int main()
 {
@@ -206,7 +268,7 @@ int main()
         return -1;
     }
 
-    
+
 
     if (ioctl(file, I2C_SLAVE, addr) < 0)
     {
