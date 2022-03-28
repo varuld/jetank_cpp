@@ -1,6 +1,7 @@
 #ifndef STEPPER_MOVE_HEADER_DEF
 #define STEPPER_MOVE_HEADER_DEF
 
+#include "helper_funcs.hpp"
 #include <linux/i2c-dev.h>
 #include <linux/i2c.h>
 //#include <i2c/smbus.h>
