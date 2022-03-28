@@ -1,6 +1,20 @@
 #ifndef STEPPER_MOVE_HEADER_DEF
 #define STEPPER_MOVE_HEADER_DEF
 
+#include <linux/i2c-dev.h>
+#include <linux/i2c.h>
+//#include <i2c/smbus.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <chrono>
+#include <thread>
+#include <cstdlib>
+
+//constexpr int addr = 0x60;
+
 /*
 Left forward:
 0x0c, 0x0d, 0x28, 0x29 - (Speed values)
@@ -21,33 +35,33 @@ constexpr __u8 MOTOR_OFF = 0x00;
 // run left motor forwards or backwards
 void left_motor_start(int file)
 {
-    __u8 left_forward_reg[4] = {0x0c, 0x0d, 0x28, 0x29};
-    __u8 other_reg[] = {0x2b, 0x31};
-    int s1 = (int) (255 * 1 * 16);
-    int s2 = (int) (255 * 1 * 16);
-    __u8 v1 = val1(s1);
-    __u8 v2 = val2(s2);
-    __s32 res;
-    for (int i = 0; i < sizeof(other_reg); i++)
-    {
-        //res = i2c_smbus_write_byte_data(file, other_reg[i], 0x10);
+	__u8 left_forward_reg[4] = {0x0c, 0x0d, 0x28, 0x29};
+	__u8 other_reg[] = {0x2b, 0x31};
+	int s1 = (int) (255 * 1 * 16);
+	int s2 = (int) (255 * 1 * 16);
+	__u8 v1 = val1(s1);
+	__u8 v2 = val2(s2);
+	__s32 res;
+	for (int i = 0; i < sizeof(other_reg); i++)
+	{
+		//res = i2c_smbus_write_byte_data(file, other_reg[i], 0x10);
 		res = i2c_smbus_write_byte_data(file, other_reg[i], MOTOR_ON);
-    }
-    for (int i = 0; i < sizeof(left_forward_reg); i += 2)
-    {
-        res = i2c_smbus_write_byte_data(file, left_forward_reg[i], v1);
-        res = i2c_smbus_write_byte_data(file, left_forward_reg[i+1], v2);
-    }
+	}
+	for (int i = 0; i < sizeof(left_forward_reg); i += 2)
+	{
+		res = i2c_smbus_write_byte_data(file, left_forward_reg[i], v1);
+		res = i2c_smbus_write_byte_data(file, left_forward_reg[i+1], v2);
+	}
 }
 void left_motor_back(int file)
 {
 	__u8 left_back_reg[4] = {0x0c, 0x0d, 0x28, 0x29};
 	__u8 left_on_reg[] = {0x2d, 0x2f};
 	int s1 = (int) (255 * 1 * 16);
-    int s2 = (int) (255 * 1 * 16);
-    __u8 v1 = val1(s1);
-    __u8 v2 = val2(s2);
-    __s32 res;
+	int s2 = (int) (255 * 1 * 16);
+	__u8 v1 = val1(s1);
+	__u8 v2 = val2(s2);
+	__s32 res;
 
 	// turn motors on backwards
 	for (int i = 0; i < sizeof(left_on_reg); i++)
@@ -67,19 +81,19 @@ void left_motor_back(int file)
 //stop the left motor
 void left_motor_stop(int file)
 {
-    __u8 left_forward_reg[4] = {0x0c, 0x0d, 0x28, 0x29};
-    __u8 other_reg[] = {0x2b, 0x31};
-    __s32 res;
-    for (int i = 0; i < sizeof(other_reg); i++)
-    {
-        //res = i2c_smbus_write_byte_data(file, other_reg[i], 0x00);
+	__u8 left_forward_reg[4] = {0x0c, 0x0d, 0x28, 0x29};
+	__u8 other_reg[] = {0x2b, 0x31};
+	__s32 res;
+	for (int i = 0; i < sizeof(other_reg); i++)
+	{
+		//res = i2c_smbus_write_byte_data(file, other_reg[i], 0x00);
 		res = i2c_smbus_write_byte_data(file, other_reg[i], MOTOR_OFF);
-    }
-    for (int i = 0; i < sizeof(left_forward_reg); i += 2)
-    {
-        res = i2c_smbus_write_byte_data(file, left_forward_reg[i], MOTOR_OFF);
-        res = i2c_smbus_write_byte_data(file, left_forward_reg[i+1], MOTOR_OFF);
-    }
+	}
+	for (int i = 0; i < sizeof(left_forward_reg); i += 2)
+	{
+		res = i2c_smbus_write_byte_data(file, left_forward_reg[i], MOTOR_OFF);
+		res = i2c_smbus_write_byte_data(file, left_forward_reg[i+1], MOTOR_OFF);
+	}
 }
 void left_motor_back_stop(int file)
 {
