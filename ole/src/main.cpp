@@ -1,39 +1,35 @@
-#include <iostream>
-#include <chrono>
+#include "Servos.h"
 #include <thread>
-#include "SCS15.h"
 
 
-const char* DEVICENAME = "/dev/ttyTHS1";
-const int BAUDRATE = 1000000;
 
 int main()
 {
+	using namespace std::chrono_literals; 
+	
 	// Gets port of device
-	using namespace std::chrono_literals;
-	int port = openPort(DEVICENAME,BAUDRATE);
-	if(port == -1)
+	Servos servos = Servos();
+	if(!servos.isConnected())
 	{
-		std::cout << "Failed to open device " << DEVICENAME << std::endl; 
-		return -1;
-	}	
-
-
-	for(int i=1; i<6; i++)
-	{
-		setSpeed(port,i,600);
-		std::this_thread::sleep_for(200ms);
+		std::cout<<"Could not open connection\n";
 	}
-	std::this_thread::sleep_for(200ms);
+	servos.setServoSpeed(2,300);
+	servos.setServoAngle(2,45);
 
-	for(int i=1; i<6; i++)
+	for(int i=0;i<10;i++)
 	{
-		moveServo(port,i,-30);
-		std::this_thread::sleep_for(200ms);
+		std::this_thread::sleep_for(100ms);
+		std::cout << "Current angle is: "<<servos.getServoData(2).current_angle <<'\n';
 	}
 
-	//moveAllServos(port,{0,0,0,0,0});
-	closePort(port);
+	servos.setServoAngle(2,0);
+
+	for(int i=0;i<10;i++)
+	{
+		std::this_thread::sleep_for(100ms);
+		std::cout << "Current angle is: "<<servos.getServoData(2).current_angle <<'\n';
+	}
+
 	return 0;
 
 }
