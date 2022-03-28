@@ -1,4 +1,4 @@
-#include "motors.h"
+#include "src/motors.h"
 
 int main()
 {
@@ -16,27 +16,27 @@ int main()
         {
             m.moveForward();
         }
-        
+
         else if (ch == 'd')
         {
             m.moveRight();
         }
-        
+
         else if (ch == 'a')
         {
             m.moveLeft();
         }
-    
+
         else if (ch == 's')
         {
             m.moveBackward();
         }
-        
+
         else if (ch == 'x')
         {
             m.moveStop();
         }
-        
+
         else if (ch == 'q')
         {
             m.moveStop();

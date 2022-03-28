@@ -9,3 +9,8 @@ build_and_exec()
 	./main
 }
 build_and_exec
+b_w_comp()
+{
+	mkdir -p "$pwd_var"/build
+	cd "$pwd_var"/build || exit
+}
