@@ -1,0 +1,15 @@
+#! /bin/bash
+pwd_var=$(pwd)
+run_after_build=$1
+build_and_exec()
+{
+	mkdir -p "$pwd_var"/build
+	cd "$pwd_var"/build || exit
+	cmake ../
+	make
+}
+run_build()
+{
+	./main
+}
+build_and_exec
