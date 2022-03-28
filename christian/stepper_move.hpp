@@ -1,5 +1,5 @@
-#ifndef SERVO_MOVE_HEADER_DEF
-#define  SERVO_MOVE_HEADER_DEF
+#ifndef STEPPER_MOVE_HEADER_DEF
+#define STEPPER_MOVE_HEADER_DEF
 
 /*
 Left forward:
