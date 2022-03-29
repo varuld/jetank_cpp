@@ -1,5 +1,5 @@
-#include <Jetank/Motors.h>
-#include <Jetank/Servos.h>
+#include "Jetank/motors.h"
+#include "Jetank/Servos.h"
 
 int main()
 {
@@ -21,27 +21,27 @@ int main()
         {
             m.moveForward();
         }
-        
+
         else if (ch == 'd')
         {
             m.moveRight();
         }
-        
+
         else if (ch == 'a')
         {
             m.moveLeft();
         }
-    
+
         else if (ch == 's')
         {
             m.moveBackward();
         }
-        
+
         else if (ch == 'x')
         {
             m.moveStop();
         }
-        
+
         else if (ch == 'q')
         {
             m.moveStop();
@@ -55,7 +55,7 @@ int main()
             {
                 speed += 0.1;
                 m.setSpeed(speed);
-            }  
+            }
         }
         else if (ch == 66)
         {
