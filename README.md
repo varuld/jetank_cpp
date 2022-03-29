@@ -1,4 +1,4 @@
-# jetank_cpp
+# Header library for Waveshare Jetank running on Jetson Nano
 
 # Maintainers
 - Ole Kjepso [@olemikole](https://github.com/olemikole)
