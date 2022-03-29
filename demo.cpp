@@ -1,4 +1,5 @@
-#include "src/motors.h"
+#include <Jetank/Motors.h>
+#include <Jetank/Servos.h>
 
 int main()
 {
@@ -11,7 +12,11 @@ int main()
     {
         ch = getchar();
         system("clear");
-        printf("\rMotors online. Speed: %3.1f\n", speed);
+        printf("\rMotor controls:\n");
+        printf("\rSteer with w (forward), a (left), d (right), s (backwards).\n");
+        printf("\rIncrease or decrease speed by pressing up and down arrow keys.\n");
+        printf("\rStop motors by pressing 's'. Exit program by pressing 'q'.\n\n");
+        printf("\r Motors online. \n\rCurrent speed: %3.1f.\n", speed);
         if (ch == 'w')
         {
             m.moveForward();
@@ -46,13 +51,19 @@ int main()
         }
         else if (ch == 65)
         {
-            speed += 0.1;
-            m.setSpeed(speed);
+            if (speed < 1.0)
+            {
+                speed += 0.1;
+                m.setSpeed(speed);
+            }
         }
         else if (ch == 66)
         {
-            speed -= 0.1;
-            m.setSpeed(speed);
+            if (speed > 0.0)
+            {
+                speed -= 0.1;
+                m.setSpeed(speed);
+            }
         }
     }
 }
