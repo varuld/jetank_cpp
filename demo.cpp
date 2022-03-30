@@ -35,6 +35,11 @@ int serve()
 }
 void movement_demo_script()
 {
+	std::cout << "This is a demomenstration of the robots movement..." << '\n';
+	std::cout << "It takes apporoximately 10 seconds to complete." << '\n';
+	std::cout << "Sid back and enjoy." << '\n';
+	std::cout << "" << std::endl;
+
 	Motors m;
 	double speed = 0.5;
 	m.setSpeed(speed);
@@ -48,13 +53,40 @@ void movement_demo_script()
 	//run_f_ptr(*Motors::p_forward_move);
 
 	m.moveForward();
-	std::this_thread::sleep_for(200ms);
+	std::this_thread::sleep_for(2000ms);
+	//m.moveStop();
+
+	m.moveRight();
+	std::this_thread::sleep_for(500ms);
+	//m.moveStop();
+	
+	m.moveForward();
+	std::this_thread::sleep_for(1500ms);
+	//m.moveStop();
+
+	m.moveRight();
+	std::this_thread::sleep_for(250ms);
+	//m.moveStop();
+
+	m.moveForward();
+	std::this_thread::sleep_for(1500ms);
+	//m.moveStop();
+
+	m.moveLeft();
+	std::this_thread::sleep_for(750ms);
+	//m.moveStop();
+
+	m.moveForward();
+	std::this_thread::sleep_for(3500ms);
 
 	m.moveStop();
 	/*system("stty cooked");
 	system("clear");
 	exit(1);*/
-	return;
+
+	std::cout << "For interactive mode, run this program with the CLI option '-i\n" << std::endl;
+	exit(1);
+	//return;
 }
 void motor_demo_run()
 {
@@ -122,9 +154,28 @@ void motor_demo_run()
 		}
 	}
 }
-int main()
+
+int main(int argc, char const *argv[])
 {
+	if (argc >= 2)
+	{
+		if (std::string(argv[1]) == "-i")
+		{
+			motor_demo_run();
+		}
+		else
+		{
+			std::cout << "There is only one option; interactive mode..." << '\n';
+			std::cout << "Runs program with '-i' or no option at all." << '\n';
+		}
+	}
+	else
+	{
+		movement_demo_script();
+	}
+	
+	
 	//motor_demo_run();
-	movement_demo_script();
+	//movement_demo_script();
 	//int s = serve();
 }
