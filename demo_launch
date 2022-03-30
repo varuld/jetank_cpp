@@ -1,0 +1,12 @@
+#! /bin/bash
+
+pwd_var=$(pwd)
+mk_build_dir_N_exc()
+{
+	mkdir -p "$pwd_var"/build || exit
+	cd "$pwd_var"/build || exit
+	cmake ../
+	make
+	./demo_program
+}
+mk_build_dir_N_exc
