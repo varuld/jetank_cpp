@@ -1,31 +1,36 @@
 #include "Jetank/Motors.h"
 #include "Jetank/Servos.h"
+#include <thread>
+#include <chrono>
+#include <string>
 
 void serve()
 {
 	using namespace std::chrono_literals;
 
-	// Gets port of device
-	Servos servos = Servos();
+	Servos servos;
 	if(!servos.isConnected())
 	{
-		std::cout<<"Could not open connection\n";
-	}
-	servos.setServoSpeed(2,300);
-	servos.setServoAngle(2,45);
-
-	for(int i=0;i<10;i++)
-	{
-		std::this_thread::sleep_for(100ms);
-		std::cout << "Current angle is: "<<servos.getServoData(2).current_angle <<'\n';
+		std::cout<<"Could not connect\n";
+		return -1;
 	}
 
-	servos.setServoAngle(2,0);
-
-	for(int i=0;i<10;i++)
+	for(int i=1;i<6;i++)
 	{
-		std::this_thread::sleep_for(100ms);
-		std::cout << "Current angle is: "<<servos.getServoData(2).current_angle <<'\n';
+		servos.setServoSpeed(i,400);
+	}
+
+
+	for(int i=1;i<6;i++)
+	{
+		servos.setServoAngle(i,30);
+		std::this_thread::sleep_for(200ms);
+	}
+
+	for(int i=1;i<6;i++)
+	{
+		servos.setServoAngle(i,0);
+		std::this_thread::sleep_for(200ms);
 	}
 }
 
