@@ -4,7 +4,7 @@
 #include <chrono>
 #include <string>
 
-void serve()
+int serve()
 {
 	using namespace std::chrono_literals;
 
@@ -33,7 +33,29 @@ void serve()
 		std::this_thread::sleep_for(200ms);
 	}
 }
+void movement_demo_script()
+{
+	Motors m;
+	double speed = 0.5;
+	m.setSpeed(speed);
+	//char ch;
 
+	using namespace std::chrono_literals;
+	//system("stty raw");
+
+	//(Motors::*p_forward_move)(&Motors::m);// = Motors::moveForward;
+	//m.p_forward_move = &Motors::Motors::moveForward
+	//run_f_ptr(*Motors::p_forward_move);
+
+	m.moveForward();
+	std::this_thread::sleep_for(200ms);
+
+	m.moveStop();
+	/*system("stty cooked");
+	system("clear");
+	exit(1);*/
+	return;
+}
 void motor_demo_run()
 {
 	Motors m;
@@ -103,5 +125,6 @@ void motor_demo_run()
 int main()
 {
 	//motor_demo_run();
-	serve();
+	movement_demo_script();
+	//int s = serve();
 }
