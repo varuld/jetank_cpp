@@ -7,6 +7,6 @@ mk_build_dir_N_exc()
 	cd "$pwd_var"/build || exit
 	cmake ../
 	make
-	./demo_program
+	sudo ./demo_program
 }
 mk_build_dir_N_exc

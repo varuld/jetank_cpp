@@ -243,3 +243,4 @@ tags
 # own additions
 build/
 main
+deprecated_files/
